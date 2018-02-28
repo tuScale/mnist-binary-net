@@ -1,6 +1,6 @@
 #! /bin/bash
 
-ENV_NAME=mnist-binary-net2
+ENV_NAME=mnist-binary-net
 CUDA_ROOT=/usr/local/cuda
 
 export PATH=$CUDA_ROOT/bin:$PATH
