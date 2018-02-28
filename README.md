@@ -1,7 +1,7 @@
 # About
 This is an updated version of the original [binary-net](https://github.com/MatthieuCourbariaux/BinaryNet) code release.
 It only includes the mnist example, but it should be easier to setup, train and evaluate. 
-I don't take any credit for the original work nor am I affiliated in any way with the original paper authors. I just took
+I don't take any credit for the original work nor am I affiliated in any way with the paper authors. I just took
 parts of their code base and updated it to so that it can be checked faster.
 
 # Prerequisites
@@ -9,7 +9,7 @@ I managed to run the project with the following resources:
 * An NVIDIA GPU PC (mine was a 970GTX, but any CUDA-enabled card should do)
 * Ubuntu (I used 16.04)
 * [Cuda SDK](https://developer.nvidia.com/cuda-downloads) (I tested it against v8.0 but v9.0 appears to be fine as well)
-* cuDNN 
+* [cuDNN](https://developer.nvidia.com/cudnn) 
 * [Python's Conda Environment Manager](https://conda.io/docs/user-guide/install/linux.html#install-linux-silent)
 
 # Setup
@@ -29,8 +29,8 @@ this, type:
 ```
 $ MKL_THREADING_LAYER=GNU python train.py
 ```
-or, if you don't want to wait, you can download the pre-trained weights from [here](https://www.dropbox.com/s/q4djs5glajolnw4/mnist_parameters.npz?dl=0).
-Once finished, just make sure the ``npz``` file is situated in the project folder if you want to evaluate it.
+or, if you don't want to wait, you can download the pre-trained weights from [here](https://www.dropbox.com/s/q4djs5glajolnw4/mnist_parameters.npz?dl=0) [cca 140MB]. 
+Once finished, just make sure the ```npz``` file is situated in the project folder if you want to evaluate it.
 
 # Evaluate
 To test the binary-net, just type
@@ -80,6 +80,7 @@ Expected values were: [8 0 8 2 1 2 4 7 6 6]
 Final test error: 0.91000%
 Time required to run all tests: 232.6229m
 ```
+# Happy coding :beers:
 
 # Notice
 Please don't change the ```kernel``` in ```evaluate.py```. For now, it only works with theano's cpu matrix multiplcations.
