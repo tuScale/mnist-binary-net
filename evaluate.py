@@ -43,17 +43,8 @@ if __name__ == "__main__":
 
     mlp = lasagne.layers.InputLayer(shape=(None, 784),input_var=input)
 
-    # Input layer is not binary -> use baseline kernel in first hidden layer
-    mlp = binary_ops.DenseLayer(
-            mlp,
-            nonlinearity=lasagne.nonlinearities.identity,
-            num_units=num_units,
-            kernel = kernel)
-
-    mlp = lasagne.layers.BatchNormLayer(mlp)
-    mlp = lasagne.layers.NonlinearityLayer(mlp,nonlinearity=binary_ops.SignTheano)
-
-    for k in range(1,n_hidden_layers):
+    # Make input + hidden layers
+    for k in range(0,n_hidden_layers):
 
         mlp = binary_ops.DenseLayer(
                 mlp,
