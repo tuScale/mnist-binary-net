@@ -23,6 +23,14 @@ To activate the environment just type
 $ source activate mnist-binary-net
 ```
 
+## Setting up Theano to use the GPU
+In order to use the GPU to speed up the training/inference, make sure Theano is [aware of this](http://deeplearning.net/software/theano/library/config.html). One easy way to do this is by using a ```.theanorc``` file situated in the home directory. Once this created, just put the following lines inside it and you are ready to go:
+```
+[global]
+floatX = float32
+device = cuda0
+```
+
 # Train
 This is the hardest part which will take a couple of hours to do (it took me arround 6 to run all those 1000 epochs). To do
 this, type:
