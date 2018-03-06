@@ -17,10 +17,11 @@ def load_dataset(flatten_x = False, one_hot = True, scale_y = True):
         urlretrieve(source + filename, filename)
 
     def load_mnist_images(filename, flatten = False):
-        if not os.path.exists(filename):
-            download(filename)
+        path = os.path.dirname(os.path.realpath(__file__)) + '/' + filename
+        if not os.path.exists(path):
+            download(path)
         # Read the inputs in Yann LeCun's binary format.
-        with gzip.open(filename, 'rb') as f:
+        with gzip.open(path, 'rb') as f:
             data = np.frombuffer(f.read(), np.uint8, offset=16)
         # The inputs are vectors now, we reshape them to monochrome 2D images,
         # following the shape convention: (examples, channels, rows, columns)
@@ -32,13 +33,14 @@ def load_dataset(flatten_x = False, one_hot = True, scale_y = True):
         # The inputs come as bytes, we convert them to float32 in range [0,1].
         data = data / np.float32(255)
         # Finally, we translate the values in the [-1, +1] domain
-        return 2 * data - 1.
+        return np.int8(2 * np.ceil(data) - 1.)
 
     def load_mnist_labels(filename, one_hot = True, scale = True):
-        if not os.path.exists(filename):
-            download(filename)
+        path = os.path.dirname(os.path.realpath(__file__)) + '/' + filename
+        if not os.path.exists(path):
+            download(path)
         # Read the labels in Yann LeCun's binary format.
-        with gzip.open(filename, 'rb') as f:
+        with gzip.open(path, 'rb') as f:
             data = np.frombuffer(f.read(), np.uint8, offset=8)
         # The labels are vectors of integers now, one-hot encode them
         if one_hot:
@@ -47,11 +49,6 @@ def load_dataset(flatten_x = False, one_hot = True, scale_y = True):
             if scale:
                data = 2 * data - 1.
         return data
-
-    # flatten targets
-    # train_set.y = np.hstack(train_set.y)
-    # valid_set.y = np.hstack(valid_set.y)
-    # test_set.y = np.hstack(test_set.y)
 
     # We can now download and read the training and test set images and labels.
     X_train = load_mnist_images('train-images-idx3-ubyte.gz', flatten_x)

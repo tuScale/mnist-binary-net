@@ -1,5 +1,6 @@
-
 import sys
+sys.path.append('..')
+
 import os
 import time
 
@@ -10,8 +11,10 @@ import theano.tensor as T
 import lasagne
 
 import dataset
+from consts import *
 
 class BinaryDenseLayer(lasagne.layers.Layer):
+    # TODO: do proper parameter default initialization. eg. W should take values from {-1, 1}
     def __init__(self, incoming, num_units, W = lasagne.init.Normal(0.01), xInt = lasagne.init.Normal(0.01), sigmaSgn = lasagne.init.Normal(0.01), **kwargs):
         super(BinaryDenseLayer, self).__init__(incoming, **kwargs)
         num_inputs = self.input_shape[1]
@@ -25,7 +28,7 @@ class BinaryDenseLayer(lasagne.layers.Layer):
         # comparison.
         # This basically implements the x-intercept step operation:
         #     neg(sign(sigma)) if x < mu - (beta * std/gamma) - bias else sign(sigma)
-        return (2 * T.gt(x - self.xIntercept, 0) - 1.) * self.sigmaSign
+        return (2 * T.gt(x - self.xIntercept, 0) - 1) * self.sigmaSign
 
     def get_output_for(self, input, **kwargs):
         # TODO: XNORify this
@@ -71,16 +74,25 @@ if __name__ == "__main__":
 
     # Load the network parameters
     print("Loading the trained parameters and binarizing the weights...")
-    with np.load('mnist_step_parameters.npz') as f:
-        param_values = [f['arr_%d' % i] for i in range(len(f.files))]
+    with np.load('parameters.npz') as f:
+        config_values = f['arr_0']
+        print('  * X-intercept data types loaded as \'%s\'.' % (permitted_xint_dts[config_values[0]]))
+
+        param_values = [f['arr_%d' % i] for i in range(1, len(f.files))]
         lasagne.layers.set_all_param_values(mlp, param_values)
+
+    params = lasagne.layers.get_all_params(mlp)
+    for param in params:
+        if param.name == "xIntercept":
+            orig_weights = param.get_value()
+            param.set_value(orig_weights)
 
     print('Running tests...')
 
-    test_subsampled_indeces = np.random.choice(len(test_set['y']), 10)
+    test_subsampled_indeces = np.random.choice(len(test_set['y']), 20)
     test_out = val_fn(test_set['X'][test_subsampled_indeces])
-    print ('Predicted output for 10 randomly sampled digits: %s' % test_out)
-    print ('Expected values were: %s' % test_set['y'][test_subsampled_indeces])
+    print('Predicted output for %d randomly sampled digits: \n%s' % (len(test_subsampled_indeces), test_out))
+    print('Expected values were: \n%s' % test_set['y'][test_subsampled_indeces])
 
     start_time = time.time()
     test_error = val_fn_error(test_set['X'],test_set['y'])*100.
@@ -88,4 +100,3 @@ if __name__ == "__main__":
 
     print("Final test error: %.5f%%" % test_error)
     print("Time required to run all tests: %.4fms" % run_time)
-
